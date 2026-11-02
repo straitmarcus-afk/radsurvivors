@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rad Survivors</title>
+<meta name="description" content="A free wasteland horde game. Play in your browser or download it for Windows, Mac, Linux and Steam Deck. Load your own Fallout 2 files for the full look.">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  @font-face { font-family: "VT323"; src: url("fonts/vt323.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Share Tech Mono"; src: url("fonts/share-tech-mono.woff2") format("woff2"); font-display: swap; }
+
+  :root {
+    --night: #120e0b;
+    --plate: #2a1f17;
+    --plate-deep: #1b140f;
+    --edge: #7b5634;
+    --rivet: #a37a52;
+    --green: #9cf08a;
+    --green-dim: #4f8a47;
+    --amber: #f0b23e;
+    --bone: #e9dcc0;
+    --muted: #b8a588;
+    --line: #3a2c20;
+    --display: "VT323", "Share Tech Mono", ui-monospace, monospace;
+    --body: "Share Tech Mono", ui-monospace, Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at 50% -10%, #2c2015 0%, var(--night) 60%);
+    background-color: var(--night);
+    color: var(--bone);
+    font: 16px/1.6 var(--body);
+  }
+  a { color: var(--green); }
+  a:focus-visible, .btn:focus-visible, summary:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  .wrap { width: min(100% - 32px, 1040px); margin-inline: auto; }
+
+  header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 18px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--amber); text-decoration: none; font: 28px/1 var(--display); letter-spacing: 0.04em; text-transform: uppercase; }
+  .brand img { width: 32px; height: 32px; image-rendering: auto; }
+  nav.top { display: flex; gap: 18px; font-size: 14px; }
+  nav.top a { color: var(--muted); text-decoration: none; }
+  nav.top a:hover { color: var(--green); }
+
+  .hero { display: grid; gap: 22px; padding-block: 36px 28px; }
+  .eyebrow { margin: 0; color: var(--green-dim); font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; }
+  h1 {
+    margin: 0;
+    font: clamp(64px, 13vw, 132px)/0.82 var(--display);
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 22px rgba(240,178,62,0.3), 4px 4px 0 #3a2210;
+  }
+  .lede { margin: 0; max-width: 58ch; color: var(--muted); font-size: 18px; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 14px 22px; border: 2px solid var(--green-dim); background: #0f160d;
+    color: var(--green); font: 28px/1 var(--display); letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none;
+    text-shadow: 0 0 8px rgba(156,240,138,0.4);
+  }
+  .btn:hover { background: var(--green); color: var(--night); border-color: var(--green); text-shadow: none; }
+  .btn.alt { color: var(--amber); border-color: #7a5a2a; background: transparent; text-shadow: none; }
+  .btn.alt:hover { background: var(--amber); color: var(--night); border-color: var(--amber); }
+  .note { margin: 0; font-size: 13px; color: var(--muted); }
+
+  .panel {
+    position: relative;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.018) 0 1px, transparent 1px 3px), linear-gradient(160deg, var(--plate), var(--plate-deep));
+    border: 2px solid var(--edge);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.6), inset 0 2px 0 rgba(255,220,170,0.08), 0 10px 30px rgba(0,0,0,0.45);
+    padding: 22px;
+  }
+  .panel::before, .panel::after {
+    content: ""; position: absolute; top: 7px; width: 6px; height: 6px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--rivet), #3a2618);
+  }
+  .panel::before { left: 7px; }
+  .panel::after { right: 7px; }
+
+  section { padding-block: 28px; }
+  h2 { margin: 0 0 14px; font: 40px/1 var(--display); color: var(--green); text-transform: uppercase; text-shadow: 0 0 10px rgba(156,240,138,0.3); }
+  h3 { margin: 0 0 6px; font: 26px/1.05 var(--display); color: var(--amber); }
+  p { margin: 0 0 10px; }
+
+  .shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .shots figure { margin: 0; }
+  .shots img { display: block; width: 100%; height: auto; border: 2px solid var(--edge); background: #000; }
+  .shots figcaption { margin-top: 6px; font-size: 13px; color: var(--muted); }
+  .shots-note { margin-top: 12px; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; counter-reset: step; list-style: none; margin: 0; padding: 0; }
+  .steps li { counter-increment: step; }
+  .steps li::before {
+    content: counter(step); position: static; display: block; width: auto; height: auto; border-radius: 0; background: none;
+    font: 56px/0.9 var(--display); color: var(--green-dim); margin-bottom: 6px;
+  }
+
+  .downloads { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .dl { display: grid; gap: 10px; align-content: start; }
+  .dl .btn { font-size: 22px; padding: 12px 14px; }
+  .dl.you { border-color: var(--green); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.6), 0 0 0 1px var(--green), 0 10px 30px rgba(0,0,0,0.45); }
+  .dl .you-tag { display: none; color: var(--green); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; }
+  .dl.you .you-tag { display: block; }
+  .dl .small { font-size: 13px; color: var(--muted); }
+
+  details { border-top: 1px solid var(--line); padding-block: 12px; }
+  details:last-child { border-bottom: 1px solid var(--line); }
+  summary { cursor: pointer; font: 24px/1.15 var(--display); color: var(--bone); list-style: none; display: flex; gap: 10px; }
+  summary::before { content: "+"; color: var(--green); width: 1ch; flex: none; }
+  details[open] summary::before { content: "-"; }
+  details > div { padding: 8px 0 0 calc(1ch + 10px); color: var(--muted); }
+  details ol, details ul { margin: 6px 0 10px; padding-left: 20px; }
+  code { color: var(--green); overflow-wrap: anywhere; }
+
+  footer { padding-block: 30px 40px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); margin-top: 20px; }
+  footer p { max-width: 80ch; }
+
+  @media (max-width: 760px) {
+    .steps, .downloads, .shots { grid-template-columns: minmax(0, 1fr); }
+    nav.top { display: none; }
+    .lede { font-size: 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<header class="top wrap">
+  <a class="brand" href="./"><img src="icon.png" alt="" width="32" height="32">Rad Survivors</a>
+  <nav class="top" aria-label="Sections">
+    <a href="play/">Play</a>
+    <a href="#download">Download</a>
+    <a href="#how">How it works</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero wrap" aria-labelledby="title">
+    <p class="eyebrow">A free wasteland horde game</p>
+    <h1 id="title">Rad Survivors</h1>
+    <p class="lede">Hold out for ten minutes against the horde, then kill the beast that comes for you. Your weapons fire on their own. You just keep moving. Build your survivor once, find holodisks and chests, evolve your weapons, and go again.</p>
+    <div class="ctas">
+      <a class="btn" href="play/">Play in your browser</a>
+      <a class="btn alt" href="#download">Download</a>
+    </div>
+    <p class="note">Free. No account. Works with a keyboard, a gamepad or a touchscreen.</p>
+  </section>
+
+  <section class="wrap" aria-label="Screenshots">
+    <div class="shots">
+      <figure><img src="shots/run.webp" alt="A survivor in a blue jumpsuit in the middle of a swarm of desert creatures, with a weapon list and timer on screen" width="1280" height="720" loading="lazy"><figcaption>Five and a half minutes in.</figcaption></figure>
+      <figure><img src="shots/levelup.webp" alt="The level-up screen with three choices" width="1280" height="720" loading="lazy"><figcaption>Pick a weapon or a perk on every level.</figcaption></figure>
+      <figure><img src="shots/creator.webp" alt="The character creator showing seven stats" width="1280" height="720" loading="lazy"><figcaption>Build your survivor once. Every run uses it.</figcaption></figure>
+      <figure><img src="shots/title.webp" alt="The title screen" width="1280" height="720" loading="lazy"><figcaption>Spend caps between runs on armor, weapons and perks.</figcaption></figure>
+    </div>
+    <p class="note shots-note">These show the game's built-in art. Load your own Fallout 2 files and it switches to that game's creatures, desert, interface, music and weapon sounds.</p>
+  </section>
+
+  <section id="how" class="wrap" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps">
+      <li class="panel"><h3>Have Fallout 2</h3><p>The full look comes from your own copy of Fallout 2 from Steam or GOG. Without it, you can still play with the built-in art.</p></li>
+      <li class="panel"><h3>Point it at your files</h3><p>The desktop app finds your Fallout 2 folder on its own. In the browser, pick <code>master.dat</code> and <code>critter.dat</code> once. Your browser keeps them for next time.</p></li>
+      <li class="panel"><h3>Survive</h3><p>Ten minutes, then the boss. Caps you find carry over. Spend them in the vault terminal between runs.</p></li>
+    </ol>
+    <p class="note" style="margin-top:12px">Your Fallout files never leave your device. Nothing is uploaded anywhere.</p>
+  </section>
+
+  <section id="download" class="wrap" aria-labelledby="dl-h">
+    <h2 id="dl-h">Download</h2>
+    <div class="downloads">
+      <div class="panel dl" data-os="windows">
+        <span class="you-tag">Your system</span>
+        <h3>Windows</h3>
+        <a class="btn" href="https://github.com/straitmarcus-afk/radsurvivors/releases/latest/download/Rad-Survivors-windows-x64-setup.exe">Installer (.exe)</a>
+        <p class="small">Windows 10 or 11, 64-bit. Windows may warn you the first time. See the FAQ.</p>
+      </div>
+      <div class="panel dl" data-os="mac">
+        <span class="you-tag">Your system</span>
+        <h3>Mac</h3>
+        <a class="btn" href="https://github.com/straitmarcus-afk/radsurvivors/releases/latest/download/Rad-Survivors-mac-arm64.dmg">Apple silicon (.dmg)</a>
+        <a class="btn alt" href="https://github.com/straitmarcus-afk/radsurvivors/releases/latest/download/Rad-Survivors-mac-x64.dmg">Intel (.dmg)</a>
+        <p class="small">M1 or newer: Apple silicon. Older Macs: Intel. Your Mac may block it the first time. See the FAQ.</p>
+      </div>
+      <div class="panel dl" data-os="linux">
+        <span class="you-tag">Your system</span>
+        <h3>Linux and Steam Deck</h3>
+        <a class="btn" href="https://github.com/straitmarcus-afk/radsurvivors/releases/latest/download/Rad-Survivors-linux-x64.AppImage">AppImage</a>
+        <p class="small">Runs in Desktop Mode and Gaming Mode on the Deck. No launch options needed.</p>
+      </div>
+    </div>
+    <p class="note" style="margin-top:12px">Every version and its changes: <a href="https://github.com/straitmarcus-afk/radsurvivors/releases">release notes</a>.</p>
+  </section>
+
+  <section id="faq" class="wrap" aria-labelledby="faq-h">
+    <h2 id="faq-h">FAQ</h2>
+    <details>
+      <summary>Do I need Fallout 2?</summary>
+      <div><p>No. The game runs on its own with built-in art. With your Fallout 2 files it uses that game's creatures, desert ground, interface, music and weapon sounds. Any copy works, from Steam or GOG.</p></div>
+    </details>
+    <details>
+      <summary>Where are my Fallout 2 files?</summary>
+      <div>
+        <p>You need the folder with <code>master.dat</code> and <code>critter.dat</code> in it. Music lives in <code>sound/music</code> inside that folder.</p>
+        <ul>
+          <li>Steam: right-click Fallout 2 in your library, then Manage, then Browse local files.</li>
+          <li>GOG Galaxy: open Fallout 2, click the settings icon, then Manage installation, then Show folder.</li>
+          <li>Steam Deck: usually <code>/home/deck/.local/share/Steam/steamapps/common/Fallout 2</code>.</li>
+        </ul>
+      </div>
+    </details>
+    <details>
+      <summary>Windows says "Windows protected your PC"</summary>
+      <div><p>That screen appears for apps that aren't signed with a paid certificate. Click <strong>More info</strong>, then <strong>Run anyway</strong>. You only do this once.</p></div>
+    </details>
+    <details>
+      <summary>My Mac won't open it</summary>
+      <div>
+        <p>Macs block apps that aren't signed through Apple's paid developer program. To open it the first time:</p>
+        <ol>
+          <li>Drag Rad Survivors into Applications and try to open it. Close the warning.</li>
+          <li>Open System Settings, then Privacy and Security.</li>
+          <li>Scroll down and click <strong>Open Anyway</strong> next to Rad Survivors.</li>
+        </ol>
+        <p>On older macOS, Control-click the app and choose Open instead.</p>
+      </div>
+    </details>
+    <details>
+      <summary>How do I add it to my Steam Deck?</summary>
+      <div>
+        <ol>
+          <li>In Desktop Mode, download the AppImage.</li>
+          <li>Right-click it, choose Properties, then Permissions, and tick "Is executable".</li>
+          <li>In Steam, choose Games, then Add a Non-Steam Game, and pick the AppImage.</li>
+          <li>Go back to Gaming Mode and play. It finds Fallout 2 on the Deck or the SD card by itself.</li>
+        </ol>
+      </div>
+    </details>
+    <details>
+      <summary>Do my files get uploaded?</summary>
+      <div><p>No. The game reads them on your device. In the browser, your files and your save stay in that browser's storage. To forget them, clear this site's data in your browser settings.</p></div>
+    </details>
+    <details>
+      <summary>Is the browser version the same game?</summary>
+      <div><p>Yes. The desktop app is the same game in its own window, plus it finds your Fallout 2 folder for you. Saves don't move between the browser and the app.</p></div>
+    </details>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>Rad Survivors is a free, unofficial fan project. It is not affiliated with, endorsed by or sponsored by Bethesda Softworks, ZeniMax Media or Interplay. Fallout is a trademark of Bethesda Softworks LLC.</p>
+  <p>The game ships with no Fallout art, sound or music. It reads them from your own copy of Fallout 2, on your device.</p>
+  <p>Fonts: VT323 and Share Tech Mono, under the SIL Open Font License.</p>
+</footer>
+
+<script>
+  // Highlight the download for the visitor's system.
+  (function () {
+    var ua = navigator.userAgent || "";
+    var os = /Windows/i.test(ua) ? "windows" : /Mac OS X|Macintosh/i.test(ua) && !/iPhone|iPad/i.test(ua) ? "mac" : /Linux|X11/i.test(ua) && !/Android/i.test(ua) ? "linux" : "";
+    if (!os) return;
+    var el = document.querySelector('.dl[data-os="' + os + '"]');
+    if (el) el.classList.add("you");
+  })();
+</script>
+</body>
+</html>

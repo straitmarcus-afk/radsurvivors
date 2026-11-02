@@ -1,0 +1,6 @@
+node_modules/
+desktop/app/
+desktop/release/
+_site/
+*.dat
+*.acm

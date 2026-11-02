@@ -1,0 +1,71 @@
+{
+  "name": "rad-survivors",
+  "productName": "Rad Survivors",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Survivors-style horde game that reads art and music from your own Fallout 2 install",
+  "author": "Marcus Strait",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist": "node prepare.mjs && electron-builder --linux AppImage",
+    "dist:win": "node prepare.mjs && electron-builder --win nsis --x64",
+    "dist:mac": "node prepare.mjs && electron-builder --mac dmg --arm64 --x64"
+  },
+  "devDependencies": {
+    "electron": "44.9.0",
+    "electron-builder": "26.17.0"
+  },
+  "build": {
+    "appId": "com.straitmarcus.radsurvivors",
+    "productName": "Rad Survivors",
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "app/**"
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "linux": {
+      "target": "AppImage",
+      "category": "Game",
+      "icon": "build/icon.png",
+      "executableArgs": [
+        "--no-sandbox",
+        "--ozone-platform=x11"
+      ],
+      "artifactName": "Rad-Survivors-linux-x64.AppImage",
+      "syncDesktopName": true
+    },
+    "publish": null,
+    "afterPack": "./after-pack.cjs",
+    "executableName": "rad-survivors",
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png",
+      "artifactName": "Rad-Survivors-windows-x64-setup.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "shortcutName": "Rad Survivors",
+      "uninstallDisplayName": "Rad Survivors"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.png",
+      "category": "public.app-category.games",
+      "identity": "-",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "artifactName": "Rad-Survivors-mac-${arch}.${ext}"
+    },
+    "dmg": {
+      "title": "Rad Survivors"
+    }
+  },
+  "desktopName": "rad-survivors.desktop"
+}
