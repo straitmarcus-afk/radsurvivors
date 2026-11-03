@@ -1,7 +1,7 @@
 {
   "name": "rad-survivors",
   "productName": "Rad Survivors",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "private": true,
   "description": "Survivors-style horde game that reads art and music from your own Fallout 2 install",
   "author": "Marcus Strait",
